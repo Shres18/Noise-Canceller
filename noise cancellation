@@ -2,7 +2,7 @@
 noisy_signal = audioread('factory-atmosphere-6930.wav');
 
 % Specify the filename of the audio file
-filename = 'C:\Users\manas\Downloads\factory-atmosphere-6930.wav';
+filename = 'factory-atmosphere-6930.wav';
 
 % Read audio data from the file
 [y, Fs] = audioread(filename);
