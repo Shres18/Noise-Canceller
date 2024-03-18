@@ -1,0 +1,60 @@
+% Load the noisy industrial noise data
+noisy_signal = audioread('C:\Users\manas\Downloads\factory-atmosphere-6930.wav');
+
+% Specify the filename of the audio file
+filename = 'C:\Users\manas\Downloads\factory-atmosphere-6930.wav';
+
+% Read audio data from the file
+[y, Fs] = audioread(filename);
+
+% Define parameters
+window_size = 1024; % Size of the analysis window
+overlap_ratio = 0.75; % Overlap ratio between consecutive windows
+mu = 0.01; % LMS algorithm step size
+
+% Initialize adaptive filter coefficients
+w = zeros(window_size, 1);
+
+% Initialize clean signal as zeros
+clean_signal = zeros(size(noisy_signal));
+
+% Perform noise reduction using adaptive filtering (LMS algorithm)
+step_size = window_size * (1 - overlap_ratio);
+for i = 1:step_size:length(noisy_signal)-window_size
+    % Extract current window
+    window = noisy_signal(i:i+window_size-1);
+    
+    % Compute error signal (difference between noisy and cleaned signal)
+    error_signal = window - w' .* window;
+    
+    % Update filter coefficients using LMS algorithm
+    w = w + mu * error_signal * window.'; % Update filter coefficients
+    
+    % Apply the adaptive filter to cancel noise
+    clean_window = window - w'.* window;
+    
+    % Overlap-add to reconstruct the cleaned signal
+    clean_signal(i:i+window_size-1) = clean_signal(i:i+window_size-1) + clean_window;
+end
+t = (0:length(noisy_signal)-1) / Fs;
+figure;
+subplot(2,1,1);
+plot(t, noisy_signal);
+xlabel('Time (s)');
+ylabel('Amplitude');
+title('Original Noisy Signal');
+subplot(2,1,2);
+plot(t, clean_signal);
+xlabel('Time (s)');
+ylabel('Amplitude');
+title('Cleaned Signal');
+% Normalize the cleaned signal
+clean_signal = clean_signal / max(abs(clean_signal));
+
+% Play the noisy signal
+sound(noisy_signal, Fs);
+pause(length(noisy_signal)/Fs); % Wait for the duration of the noisy signal
+
+
+% Play silence (clean signal)
+sound(zeros(size(clean_signal)),Fs);
