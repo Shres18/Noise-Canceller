@@ -1,5 +1,5 @@
 % Load the noisy industrial noise data
-noisy_signal = audioread('C:\Users\manas\Downloads\factory-atmosphere-6930.wav');
+noisy_signal = audioread('factory-atmosphere-6930.wav');
 
 % Specify the filename of the audio file
 filename = 'C:\Users\manas\Downloads\factory-atmosphere-6930.wav';
